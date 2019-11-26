@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="cn.tourism.back.mapper.UserMapper">
+    <resultMap id="userVoMap" type="cn.tourism.back.vo.UserVo">
+        <id column="uid" property="uid" jdbcType="INTEGER" />
+        <result column="phone" property="phone" jdbcType="VARCHAR" />
+        <result column="nickname" property="nickname" jdbcType="VARCHAR" />
+        <result column="declaration" property="declaration" jdbcType="VARCHAR" />
+        <result column="icon" property="icon" jdbcType="VARCHAR" />
+        <result column="num" property="num" jdbcType="INTEGER" />
+        <result column="lastTime" property="lastTime" jdbcType="TIMESTAMP" />
+        <result column="sex" property="sex" jdbcType="INTEGER" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="age" property="age" jdbcType="INTEGER" />
+        <result column="level" property="level" jdbcType="INTEGER" />
+        <result column="levelnvq" property="levelnvq" jdbcType="INTEGER" />
+        <result column="levelday" property="levelday" jdbcType="INTEGER" />
+        <result column="birth" property="birth" jdbcType="TIMESTAMP" />
+        <result column="address" property="address" jdbcType="VARCHAR"/>
+        <result column="profession" property="profession" jdbcType="VARCHAR" />
+        <result column="areacode" property="areaCode" jdbcType="VARCHAR" />
+        <result column="indirect" property="indirect" jdbcType="INTEGER" />
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="direct" property="direct" jdbcType="INTEGER" />
+        <result column="status" property="status" jdbcType="INTEGER"  typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+    </resultMap>
+
+    <select id="findById" resultMap="userVoMap">
+        select u.*, us.* from tb_user u, tb_user_son us where  u.uid = us.uid and u.uid = #{uid}
+    </select>
+
+    <select id="findAll" resultMap="userVoMap">
+        select u.*, us.* from tb_user u, tb_user_son us where  u.uid = us.uid
+        <if test="sex != null">
+            and us.sex = #{sex}
+        </if>
+        <if test="name != null">
+            and (u.uid like CONCAT('%',#{name},'%') or u.nickname like CONCAT('%',#{name},'%'))
+        </if>
+        order by u.uid desc
+    </select>
+
+    <update id="updateUser">
+        update tb_user set `level` = #{level}, nickname = #{nickname} where uid = #{uid}
+    </update>
+
+    <select id="findChildrenById" resultMap="userVoMap">
+        select u.*, us.* from tb_user u, tb_user_son us where  u.uid = us.uid and us.up = #{id}
+    </select>
+</mapper>

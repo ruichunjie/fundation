@@ -1,0 +1,57 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tourism.back.mapper.PersonMapper" >
+
+    <resultMap id="baseMap" type="cn.tourism.back.domain.Person">
+        <id column="pid" property="pid" jdbcType="INTEGER" />
+        <result column="username" property="username" jdbcType="VARCHAR"/>
+        <result column="password" property="password" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"  typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="updatetime" property="updateTime" jdbcType="TIMESTAMP" />
+        <collection property="roleSet" ofType="cn.tourism.back.domain.Role" resultMap="roleMap">
+        </collection>
+    </resultMap>
+    <resultMap id="roleMap" type="cn.tourism.back.domain.Role">
+        <id column="rid" property="rid" jdbcType="INTEGER" />
+        <result column="name" property="name" jdbcType="VARCHAR"/>
+        <result column="rstatus" property="status" jdbcType="INTEGER"  typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="rupdatetime" property="updateTime" jdbcType="TIMESTAMP" />
+        <collection property="permissionSet" ofType="cn.tourism.back.domain.Permission">
+            <id column="pnid" property="pnid" jdbcType="INTEGER" />
+            <result column="pname" property="name" jdbcType="VARCHAR"/>
+            <result column="url" property="url" jdbcType="VARCHAR"/>
+            <result column="seq" property="seq" jdbcType="INTEGER"/>
+            <result column="type" property="type" jdbcType="INTEGER" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+            <result column="pstatus" property="status" jdbcType="INTEGER"  typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+            <result column="pupdatetime" property="updateTime" jdbcType="TIMESTAMP" />
+        </collection>
+    </resultMap>
+
+    <resultMap id="permissionMap" type="cn.tourism.back.domain.Permission">
+        <id column="pnid" property="pnid" jdbcType="INTEGER" />
+        <result column="pname" property="name" jdbcType="VARCHAR"/>
+        <result column="type" property="type" jdbcType="INTEGER" typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="url" property="url" jdbcType="VARCHAR"/>
+        <result column="status" property="status" jdbcType="INTEGER"  typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="updatetime" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+
+
+    <select id="findByUsername" resultMap="baseMap">
+        select sp.*, sr.*, spn.* from sys_person sp left join sys_person_role spr on sp.pid =  spr.pid
+        left join sys_role sr on spr.rid = sr.rid
+        left join sys_role_permission srp on srp.rid = sr.rid
+        left join sys_permission spn on spn.pnid = srp.pid
+        where sp.status ='0' and sr.rstatus ='0' and spn.pstatus ='0' and sp.username = #{username}
+    </select>
+
+    <select id="findAllPermissionList" resultMap="permissionMap">
+        select sp.*, sr.*, spn.* from sys_person sp left join sys_person_role spr on sp.pid =  spr.pid
+        left join sys_role sr on spr.rid = sr.rid
+        left join sys_role_permission srp on srp.rid = sr.rid
+        left join sys_permission spn on spn.pnid = srp.pid
+        where sp.status ='0' and sr.rstatus ='0' and spn.pstatus ='0' and spn.type = '0'
+    </select>
+
+
+</mapper>

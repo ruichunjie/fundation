@@ -1,0 +1,44 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="cn.tourism.back.mapper.RouteMapper" >
+
+    <resultMap id="baseMap" type="cn.tourism.back.entity.Route">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="uid" property="uid" jdbcType="INTEGER" />
+        <result column="title" property="title" jdbcType="VARCHAR" />
+        <result column="start" property="start" jdbcType="TIMESTAMP" />
+        <result column="end" property="end" jdbcType="TIMESTAMP" />
+        <result column="days" property="days" jdbcType="INTEGER" />
+        <result column="address" property="address" jdbcType="VARCHAR" />
+        <result column="img" property="img" jdbcType="VARCHAR" />
+        <result column="fee" property="fee" jdbcType="DECIMAL" />
+        <result column="word" property="word" jdbcType="VARCHAR" />
+        <result column="status" property="status" jdbcType="INTEGER"  typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="createtime" property="createTime" jdbcType="TIMESTAMP" />
+        <result column="updatetime" property="updateTime" jdbcType="TIMESTAMP" />
+    </resultMap>
+    <resultMap id="ruMap" type="cn.tourism.back.entity.RouteUser">
+        <id column="id" property="id" jdbcType="INTEGER" />
+        <result column="rid" property="rid" jdbcType="INTEGER"/>
+        <result column="uid" property="uid" jdbcType="INTEGER"/>
+        <result column="identity" property="identity" jdbcType="INTEGER"  typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+        <result column="status" property="status" jdbcType="INTEGER"  typeHandler="org.apache.ibatis.type.EnumOrdinalTypeHandler"/>
+    </resultMap>
+
+    <select id="findAll" resultMap="baseMap">
+        select * from tb_route
+        <if test="start != null">
+            where start = #{start}
+        </if>
+        order by status, start desc
+    </select>
+
+    <update id="updateRouteStatus" >
+        update tb_route set status =#{status} where id = #{rid}
+    </update>
+
+    <select id="findAllUser" resultMap="ruMap">
+        select * from tb_route_user where rid = #{rid} order by `identity`, status
+    </select>
+
+</mapper>
